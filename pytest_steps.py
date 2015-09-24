@@ -5,6 +5,9 @@ import py
 import pytest
 
 
+DEFAULT_OUTDENT = 2
+
+
 class StepStates:
     PASSED = 'PASSED'
     ERROR = 'ERROR'
@@ -18,6 +21,7 @@ class StepStates:
             StepStates.STEPGROUP: 'light'
         }
         return colors[state]
+
 
 def pytest_addhooks(pluginmanager):
     """Register plugin hooks."""
@@ -44,7 +48,7 @@ def pytest_configure(config):
 class StepsPlugin(object):
     def __init__(self, config):
         self.config = config
-        self.outdent = 2
+        self.outdent = DEFAULT_OUTDENT
         self.stdout = os.fdopen(os.dup(sys.stdout.fileno()), 'w')
         self.tw = py._io.terminalwriter.TerminalWriter(self.stdout)
 
@@ -58,7 +62,7 @@ class StepsPlugin(object):
             self.tw.line()
             self.tw.line('  {} -->'.format(report.location[2]))
         elif report.when == 'teardown':
-            self.outdent = 2
+            self.outdent = DEFAULT_OUTDENT
             self.tw.line()
 
     def pytest_steps_report_step(self, state, name, *args, **kwargs):
@@ -69,10 +73,10 @@ class StepsPlugin(object):
         additional = ''
 
         if state == StepStates.STEPGROUP:
-            additional = ' ->'
+            additional = ':'
 
         self.tw.line('{}{} {}{}'.format(
-            '  '*self.outdent,
+            '  ' * self.outdent,
             self.tw.markup(**markup),
             name,
             additional)
@@ -110,7 +114,8 @@ def step(step_group=False, description=''):
                 else:
                     wrapper.config.hook.pytest_steps_report_step(
                         state=state,
-                        name=description or func.__name__
+                        name=description or func.__name__,
+                        *args, **kwargs
                     )
             return result
         return pytest.mark.step(wrapper)
