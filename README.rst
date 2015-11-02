@@ -4,6 +4,7 @@ A prototype for pytest-steps is a project pytest-grail from Wargaming.
 Example of usage:
 
 .. code:: python
+
   from pytest_steps import step
 
   @step
@@ -13,6 +14,14 @@ Example of usage:
   def test_my():
       first_step()
       first_step()
+
+
+Decorator test can take several parameters:
+
+1. step_group (bool) - Set this function is a step group
+2. description (str) - A human-like name for this function
+3. log_input (bool) - Show input parameters in log or not
+4. log_output (bool) - Show output from this function
 
 
 In output You will see:
