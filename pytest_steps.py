@@ -199,7 +199,7 @@ def step(func=None, step_group=False, description=None, log_input=True, log_outp
     def param_wrapper(func):
         step_info.function = func
         return pytest.mark.step(wrapper)
-
+    #FIXME: When run one function with other parameters show only first result
     if func is None:
         return param_wrapper
     else:
