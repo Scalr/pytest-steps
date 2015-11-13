@@ -115,7 +115,12 @@ class StepInfo(object):
         self.log_output = log_output
 
     def initialize(self):
-        self.description = self.description or self.function.__name__
+        if self.description is None:
+            doc = inspect.getdoc(self.function)
+            if doc is not None:
+                self.description = doc.splitlines()[0]
+            else:
+                self.description = self.function.__name__
         self.stepper = self.config.pluginmanager.getplugin('terminalreporter')
 
     def run(self):
@@ -199,9 +204,12 @@ def step(func=None, step_group=False, description=None, log_input=True, log_outp
     def param_wrapper(func):
         step_info.function = func
         return pytest.mark.step(wrapper)
-    #FIXME: When run one function with other parameters show only first result
     if func is None:
         return param_wrapper
     else:
         step_info.function = func
     return pytest.mark.step(wrapper)
+
+
+def group(func=None, description=None, log_input=True, log_output=True):
+    return step(func, step_group=True, description=description, log_input=log_input, log_output=log_output)
