@@ -7,7 +7,7 @@ setup(
         'pytest-steps is a plugin for py.test that add a steps for test suites'
     ),
     long_description=codecs.open("README.rst", encoding='utf-8').read(),
-    version='0.1',
+    version='0.1.1',
     license='BSD',
     author='Oleg Suhavrev',
     author_email='gigimon4ik@gmail.com',

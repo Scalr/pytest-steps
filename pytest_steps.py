@@ -28,22 +28,24 @@ class StepStates:
 def pytest_addhooks(pluginmanager):
     """Register plugin hooks."""
     import hooks
-    pluginmanager.addhooks(hooks)
+    pluginmanager.add_hookspecs(hooks)
 
 
 def pytest_addoption(parser):
     group = parser.getgroup("test suite steps", "steps", after="general")
     group._addoption(
         '--nosteps', action="store_false", dest="steps", default=True,
-        help=(
-            "disable pytest-steps"
-        )
+        help=("disable pytest-steps")
+    ) #TODO: Disable this in future
+    group._addoption(
+        '--steps', action="store_true", dest="with_steps", default=False,
+        help=('enable pytest-steps')
     )
 
 
 @pytest.mark.trylast
 def pytest_configure(config):
-    if config.option.steps:
+    if config.option.with_steps:
         standard_reporter = config.pluginmanager.getplugin('terminalreporter')
         config.pluginmanager.unregister(standard_reporter)
         config.pluginmanager.register(StepsPlugin(standard_reporter), 'terminalreporter')
